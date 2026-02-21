@@ -1,8 +1,8 @@
 - name: Provision platform infra (Helm from infra-gitops)
   vars:
     components:
-      - { name: argocd,        release: argocd }
-      - { name: ingresscontrollers,       release: ingress-platform }
+      - { name: argocd-bootstrap,        release: argocd }
+      - { name: ingresscontroller,       release: ingress-platform }
       - { name: observability, release: observability }
 
   loop: "{{ components }}"
