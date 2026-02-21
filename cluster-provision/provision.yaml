@@ -9,8 +9,8 @@
     target_cloud: "{{ cloud | default('eks') }}"
 
   tasks:
-    - include_tasks: tasks/validate.yml
-    - include_tasks: tasks/checkout_cloud_engineering.yml
-    - include_tasks: tasks/terraform_init.yml
-    - include_tasks: tasks/terraform_apply.yml
-    - include_tasks: tasks/infra_provision.yml
+    - include_tasks: tasks/validate.yaml
+    - include_tasks: tasks/checkout_cloud_engineering.yaml
+    - include_tasks: tasks/terraform_init.yaml
+    - include_tasks: tasks/terraform_apply.yaml
+    - include_tasks: tasks/infra_provision.yaml
