@@ -1,0 +1,11 @@
+- name: Ensure workdir exists
+  file:
+    path: "{{ workdir }}"
+    state: directory
+
+- name: Clone or update cloud-engineering repo
+  git:
+    repo: "{{ cloud_engineering_repo }}"
+    dest: "{{ workdir }}/cloud-engineering"
+    version: main
+    force: yes

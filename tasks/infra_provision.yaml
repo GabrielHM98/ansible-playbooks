@@ -1,0 +1,17 @@
+- name: Provision platform infra (Helm from infra-gitops)
+  vars:
+    components:
+      - { name: argocd,        release: argocd }
+      - { name: ingresscontrollers,       release: ingress-platform }
+      - { name: observability, release: observability }
+
+  loop: "{{ components }}"
+  loop_control:
+    loop_var: comp
+
+  block:
+    - name: Helm upgrade/install {{ comp.name }}
+      command: >
+        helm upgrade --install {{ comp.release }}
+        {{ infra_gitops_dir }}/{{ comp.name }}
+      environment: "{{ cloud_env }}"

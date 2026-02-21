@@ -1,0 +1,15 @@
+- name: Destroy platform infra (Helm uninstall)
+  vars:
+    components:
+      - { name: observability, release: observability }
+      - { name: ingresscontrollers,       release: ingress-platform }
+      - { name: argocd,        release: argocd }
+
+  loop: "{{ components }}"
+  loop_control:
+    loop_var: comp
+
+  block:
+    - name: Helm uninstall {{ comp.name }}
+      command: helm uninstall {{ comp.release }}
+      failed_when: false
