@@ -1,7 +1,7 @@
 - name: Terraform init {{ cloud }} cluster 
   tags: [cluster_init]
   ansible.builtin.command:
-    cmd: terraform init -upgrade
+    cmd: terraform init -reconfigure
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
