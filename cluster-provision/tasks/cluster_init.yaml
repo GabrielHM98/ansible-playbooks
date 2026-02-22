@@ -1,18 +1,18 @@
-- name: Terraform init (phase 1 – {{ cloud }})
+- name: Terraform init {{ cloud }} cluster 
   tags: [cluster]
   ansible.builtin.command:
     cmd: terraform init -upgrade
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
-- name: Terraform apply (phase 1 – {{ cloud }})
+- name: Terraform apply {{ cloud }} cluster
   tags: [cluster]
   ansible.builtin.command:
     cmd: terraform apply -auto-approve
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
-- name: Read Terraform outputs (phase 1 – {{ cloud }})
+- name: Read Terraform outputs from {{ cloud }} cluster
   tags: [cluster]
   ansible.builtin.command:
     cmd: terraform output -json

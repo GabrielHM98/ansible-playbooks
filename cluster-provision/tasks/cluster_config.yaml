@@ -1,11 +1,11 @@
-- name: Terraform init (phase 2 – {{ cloud }})
+- name: Terraform init {{ cloud }} config 
   tags: [cluster]
   ansible.builtin.command:
     cmd: terraform init -upgrade
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].config_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
-- name: Terraform apply (phase 2 – {{ cloud }})
+- name: Terraform apply {{ cloud }} config
   tags: [cluster]
   ansible.builtin.command:
     cmd: terraform apply -auto-approve -var="cluster_name={{ cluster_name }}"

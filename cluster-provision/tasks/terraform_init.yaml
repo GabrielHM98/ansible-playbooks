@@ -1,5 +1,0 @@
-- name: Terraform init
-  command: terraform init
-  args:
-    chdir: "{{ cluster_tf }}"
-  environment: "{{ cloud_env }}"

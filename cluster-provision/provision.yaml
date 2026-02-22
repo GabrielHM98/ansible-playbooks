@@ -13,6 +13,7 @@
       tags: [always]
 
     - include_tasks: tasks/checkout_cloud_engineering.yaml
+      tags: [always]
 
     - include_tasks: tasks/cluster_init.yaml
       tags: [cluster]
