@@ -1,0 +1,26 @@
+repos:
+  cloud_engineering_repo: "https://github.com/GabrielHM98/cloud-engineering.git"
+  workdir: "/tmp/platform-workdir"
+  infra_gitops_subdir: "/infra-gitops"
+
+clouds:
+  eks:
+    cluster_tf_subdir: "eks/cluster/init"
+    config_tf_subdir: "eks/cluster/config"
+    env:
+      AWS_REGION: us-east-1
+
+  gke:
+    cluster_tf_subdir: "gke/cluster/init"
+    config_tf_subdir: "gke/cluster/config"
+    env:
+      GOOGLE_PROJECT: your-gcp-project-id
+      GOOGLE_REGION: us-central1
+
+  aks:
+    cluster_tf_subdir: "aks/cluster/init"
+    config_tf_subdir: "aks/cluster/config"
+
+  aro:
+    cluster_tf_subdir: "aro/cluster/init"
+    config_tf_subdir: "aro/cluster/config"

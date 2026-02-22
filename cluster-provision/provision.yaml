@@ -3,7 +3,7 @@
   gather_facts: no
 
   vars_files:
-    - ./vars/cloud-providers.yaml
+    - ./vars/cloud-providers-data.yaml
 
   vars:
     target_cloud: "{{ cloud | default('eks') }}"
@@ -13,12 +13,11 @@
       tags: [always]
 
     - include_tasks: tasks/checkout_cloud_engineering.yaml
-      tags: [always]
 
-    - include_tasks: tasks/terraform_init.yaml
+    - include_tasks: tasks/cluster_init.yaml
       tags: [cluster]
 
-    - include_tasks: tasks/terraform_apply.yaml
+    - include_tasks: tasks/cluster_config.yaml
       tags: [cluster]
 
     - include_tasks: tasks/infra_provision.yaml

@@ -1,11 +1,38 @@
 # tasks/infra_provision.yaml
 
-- name: Helm upgrade/install platform components (argocd, ingresscontrollers and observability stack).
+- name: Read cluster_name from Terraform output (when resuming at infra)
+  tags: [infra]
+  ansible.builtin.command:
+    cmd: terraform output -json
+    chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
+  register: tf_cluster_outputs
+  when: cluster_name is not defined
+
+- name: Set cluster_name fact from TF output
+  tags: [infra]
+  ansible.builtin.set_fact:
+    cluster_name: "{{ (tf_cluster_outputs.stdout | from_json).cluster_name.value }}"
+  when: cluster_name is not defined
+   
+- name: Update kubeconfig for EKS cluster
+  ansible.builtin.command:
+    cmd: aws eks update-kubeconfig --region {{ clouds[cloud].env.AWS_REGION }} --name {{ cluster_name }}
+  environment: "{{ clouds[cloud].env | default({}) }}"
+  tags: [infra]
+
+- name: Install / upgrade ArgoCD (Helm)
+  tags: [infra]
+  ansible.builtin.command: >
+    helm upgrade --install argocd
+    {{ cloud_engineering_dir }}/{{ repos.infra_gitops_subdir }}/argocd
+    --namespace argocd-infra --create-namespace
+  environment: "{{ clouds[cloud].env | default({}) }}"
+
+- name: Install platform components via argocd apps (ingresscontrollers and observability stack).
+  tags: [infra]
   command: >
-    helm upgrade --install {{ item.release }}
-    {{ infra_gitops_dir }}/{{ item.name }}
+    kubectl create -f {{ infra_gitops_dir }}/{{ item.name }}/application.yaml
   loop:
-    - { name: argocd-bootstrap,        release: argocd }
     - { name: ingresscontroller,       release: ingress-nginx }
     - { name: observability, release: observability }
   environment: "{{ cloud_env }}"

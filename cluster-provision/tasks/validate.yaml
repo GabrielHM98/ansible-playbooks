@@ -1,13 +1,16 @@
 - name: Validate target cloud provider
+  tags: [always]
   assert:
     that:
       - target_cloud in clouds
     fail_msg: "Unsupported cloud '{{ target_cloud }}'. Valid: {{ clouds.keys() | list }}"
 
 - name: Set cloud facts
+  tags: [always]
   set_fact:
     workdir: "{{ repos.workdir }}"
     cloud_engineering_repo: "{{ repos.cloud_engineering_repo }}"
     cluster_tf: "{{ repos.workdir }}/cloud-engineering/{{ clouds[target_cloud].cluster_tf_subdir }}"
-    infra_gitops_dir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[target_cloud].infra_gitops_subdir }}"
+    cluster_config: "{{ repos.workdir }}/cloud-engineering/{{ clouds[target_cloud].config_tf_subdir }}"
+    infra_gitops_dir: "{{ repos.workdir }}/cloud-engineering/{{ repos.infra_gitops_subdir }}"
     cloud_env: "{{ clouds[target_cloud].env | default({}) }}"

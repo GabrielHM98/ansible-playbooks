@@ -1,11 +1,12 @@
 - name: Ensure workdir exists
-  file:
-    path: "{{ workdir }}"
+  ansible.builtin.file:
+    path: "{{ repos.workdir }}"
     state: directory
+    mode: "0755"
 
-- name: Clone or update cloud-engineering repo
-  git:
-    repo: "{{ cloud_engineering_repo }}"
-    dest: "{{ workdir }}/cloud-engineering"
+- name: Clone cloud-engineering repo
+  ansible.builtin.git:
+    repo: "{{ repos.cloud_engineering_repo }}"
+    dest: "{{ repos.workdir }}/cloud-engineering"
     version: master
     force: yes

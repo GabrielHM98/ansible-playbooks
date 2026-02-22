@@ -1,11 +1,11 @@
-# tasks/infra_provision.yaml
+# tasks/infra_deprovision.yaml
 
 - name: Helm uninstall platform components (argocd, ingresscontrollers and observability stack).
+  tags: [infra]
   command: >
     helm uninstall {{ item.release }}
     {{ infra_gitops_dir }}/{{ item.name }}
   loop:
-    - { name: argocd-bootstrap,        release: argocd }
     - { name: ingresscontroller,       release: ingress-nginx }
-    - { name: observability, release: observability }
+    - { name: observability,           release: observability }
   environment: "{{ cloud_env }}"
