@@ -1,4 +1,4 @@
-- name: Terraform apply (cluster)
+- name: Cluster bootstrap
   command: terraform apply -auto-approve
   args:
     chdir: "{{ cluster_tf }}"

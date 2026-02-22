@@ -1,4 +1,4 @@
-- name: Terraform init (cluster)
+- name: Terraform init
   command: terraform init
   args:
     chdir: "{{ cluster_tf }}"

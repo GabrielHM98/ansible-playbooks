@@ -3,7 +3,7 @@
   gather_facts: no
 
   vars_files:
-    - vars/clouds.yml
+    - ./vars/cloud-providers.yaml
 
   vars:
     target_cloud: "{{ cloud | default('eks') }}"
