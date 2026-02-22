@@ -20,13 +20,18 @@
   environment: "{{ clouds[cloud].env | default({}) }}"
   tags: [infra]
 
-#- name: Install / upgrade ArgoCD (Helm)
-#  tags: [infra]
-#  ansible.builtin.command: >
-#    helm upgrade --install argocd
-#    {{ infra_gitops_dir }}/argocd
-#    --namespace argocd-infra --create-namespace
-#  environment: "{{ clouds[cloud].env | default({}) }}"
+- name: Wait for ArgoCD API to be available
+  tags: [infra]
+  ansible.builtin.command:
+    cmd: kubectl -n argocd rollout status deploy/argocd-server --timeout=180s
+    
+- name: Install / upgrade ArgoCD (Helm)
+  tags: [infra]
+  ansible.builtin.command: >
+    helm upgrade --install argocd
+    {{ infra_gitops_dir }}/argocd
+    --namespace argocd-infra --create-namespace
+  environment: "{{ clouds[cloud].env | default({}) }}"
 
 - name: Install platform components via argocd apps (ingresscontrollers and observability stack).
   tags: [infra]
