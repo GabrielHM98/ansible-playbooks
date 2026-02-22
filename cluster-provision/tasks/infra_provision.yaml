@@ -20,11 +20,6 @@
   environment: "{{ clouds[cloud].env | default({}) }}"
   tags: [infra]
 
-- name: Wait for ArgoCD API to be available
-  tags: [infra]
-  ansible.builtin.command:
-    cmd: kubectl -n argocd rollout status deploy/argocd-server --timeout=180s
-    
 - name: Install / upgrade ArgoCD (Helm)
   tags: [infra]
   ansible.builtin.command: >
@@ -33,11 +28,17 @@
     --namespace argocd-infra --create-namespace
   environment: "{{ clouds[cloud].env | default({}) }}"
 
+- name: Wait for ArgoCD API to be available
+  tags: [infra]
+  ansible.builtin.command:
+    cmd: kubectl -n argocd-infra rollout status deploy/argocd-server --timeout=180s
+
 - name: Install platform components via argocd apps (ingresscontrollers and observability stack).
   tags: [infra]
-  command: >
-    kubectl create -f {{ infra_gitops_dir }}/{{ item.name }}/application.yaml
+  ansible.builtin.shell: >
+    kubectl create namespace {{ item.release }} &&
+    kubectl apply -f {{ infra_gitops_dir }}/{{ item.name }}/application.yaml
   loop:
     - { name: ingresscontroller,       release: ingress-nginx }
-    - { name: observability, release: observability }
+    - { name: observability, release: observability-stack }
   environment: "{{ cloud_env }}"
