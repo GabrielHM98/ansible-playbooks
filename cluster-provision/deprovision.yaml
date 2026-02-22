@@ -3,13 +3,17 @@
   gather_facts: no
 
   vars_files:
-    - ./vars/cloud-providers.yaml
+    - ./vars/cloud-providers-data.yaml
 
   vars:
     target_cloud: "{{ cloud | default('eks') }}"
 
   tasks:
     - include_tasks: tasks/validate.yaml
+      tags: [always]
     - include_tasks: tasks/checkout_cloud_engineering.yaml
+      tags: [always]
     - include_tasks: tasks/infra_destroy.yaml
-    - include_tasks: tasks/terraform_destroy.yaml
+      tags: [infra_destroy]
+    - include_tasks: tasks/cluster_destroy.yaml
+      tags: [cluster_destroy]

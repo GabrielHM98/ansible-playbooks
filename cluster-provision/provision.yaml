@@ -11,15 +11,11 @@
   tasks:
     - include_tasks: tasks/validate.yaml
       tags: [always]
-
     - include_tasks: tasks/checkout_cloud_engineering.yaml
       tags: [always]
-
     - include_tasks: tasks/cluster_init.yaml
-      tags: [cluster]
-
+      tags: [cluster_init]
     - include_tasks: tasks/cluster_config.yaml
-      tags: [cluster]
-
+      tags: [cluster_config]
     - include_tasks: tasks/infra_provision.yaml
-      tags: [infra]
+      tags: [infra_provision]

@@ -1,7 +1,7 @@
 # tasks/infra_provision.yaml
 
 - name: Read cluster_name from Terraform output (when resuming at infra)
-  tags: [infra]
+  tags: [infra_provision]
   ansible.builtin.command:
     cmd: terraform output -json
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
@@ -9,7 +9,7 @@
   when: cluster_name is not defined
 
 - name: Set cluster_name fact from TF output
-  tags: [infra]
+  tags: [infra_provision]
   ansible.builtin.set_fact:
     cluster_name: "{{ (tf_cluster_outputs.stdout | from_json).cluster_name.value }}"
   when: cluster_name is not defined
@@ -18,10 +18,10 @@
   ansible.builtin.command:
     cmd: aws eks update-kubeconfig --region {{ clouds[cloud].env.AWS_REGION }} --name {{ cluster_name }}
   environment: "{{ clouds[cloud].env | default({}) }}"
-  tags: [infra]
+  tags: [infra_provision]
 
 - name: Install / upgrade ArgoCD (Helm)
-  tags: [infra]
+  tags: [infra_provision]
   ansible.builtin.command: >
     helm upgrade --install argocd
     {{ infra_gitops_dir }}/argocd
@@ -29,12 +29,12 @@
   environment: "{{ clouds[cloud].env | default({}) }}"
 
 - name: Wait for ArgoCD API to be available
-  tags: [infra]
+  tags: [infra_provision]
   ansible.builtin.command:
     cmd: kubectl -n argocd-infra rollout status deploy/argocd-server --timeout=180s
 
 - name: Install platform components via argocd apps (ingresscontrollers and observability stack).
-  tags: [infra]
+  tags: [infra_provision]
   ansible.builtin.shell: >
     kubectl create namespace {{ item.release }} &&
     kubectl apply -f {{ infra_gitops_dir }}/{{ item.name }}/application.yaml

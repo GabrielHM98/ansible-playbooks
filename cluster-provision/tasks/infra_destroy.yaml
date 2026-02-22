@@ -1,11 +1,23 @@
-# tasks/infra_deprovision.yaml
+- name: Delete Argo ApplicationSets
+  tags: [infra_destroy]
+  ansible.builtin.command:
+    cmd: kubectl -n argocd-infra delete appsets --all
+  ignore_errors: true
 
-- name: Helm uninstall platform components (argocd, ingresscontrollers and observability stack).
-  tags: [infra]
-  command: >
-    helm uninstall {{ item.release }}
-    {{ infra_gitops_dir }}/{{ item.name }}
-  loop:
-    - { name: ingresscontroller,       release: ingress-nginx }
-    - { name: observability,           release: observability }
-  environment: "{{ cloud_env }}"
+- name: Delete Argo Applications
+  tags: [infra_destroy]
+  ansible.builtin.command:
+    cmd: kubectl -n argocd-infra delete applications --all
+  ignore_errors: true
+
+- name: Uninstall ArgoCD
+  tags: [infra_destroy]
+  ansible.builtin.command:
+    cmd: helm -n argocd-infra uninstall argocd
+  ignore_errors: true
+
+- name: Force-delete platform namespaces
+  tags: [infra_destroy]
+  ansible.builtin.command:
+    cmd: kubectl delete namespace observability-stack ingress-nginx ingress-infra ingress-internal ingress-external argocd-infra --grace-period=0 --force
+  ignore_errors: true

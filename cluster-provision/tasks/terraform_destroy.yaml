@@ -1,5 +1,0 @@
-- name: Cluster bootstrap
-  command: terraform destroy -auto-approve
-  args:
-    chdir: "{{ cluster_tf }}"
-  environment: "{{ cloud_env }}"

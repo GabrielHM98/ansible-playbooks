@@ -1,0 +1,42 @@
+- name: Read cluster_name from Terraform output (for destroy)
+  tags: [cluster_destroy]
+  ansible.builtin.command:
+    cmd: terraform output -json
+    chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
+  register: tf_cluster_outputs_destroy
+  when: cluster_name is not defined
+
+- name: Set cluster_name fact (for destroy)
+  tags: [cluster_destroy]
+  ansible.builtin.set_fact:
+    cluster_name: "{{ (tf_cluster_outputs_destroy.stdout | from_json).cluster_name.value }}"
+  when:
+    - cluster_name is not defined
+    - tf_cluster_outputs_destroy.stdout is defined
+    - (tf_cluster_outputs_destroy.stdout | from_json).cluster_name is defined
+
+- name: Fail if cluster_name still undefined
+  tags: [cluster_destroy]
+  ansible.builtin.fail:
+    msg: >
+      cluster_name could not be determined from Terraform outputs.
+      Ensure cloud-engineering/{{ cloud }}/cluster/init outputs `cluster_name`.
+  when: cluster_name is not defined
+  
+# Phase 2 – destroy in-cluster config/bootstrap
+- name: Terraform destroy {{ cloud }} cluster config
+  tags: [cluster_destroy]
+  ansible.builtin.command:
+    cmd: terraform destroy -auto-approve
+    chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].config_tf_subdir }}"
+  environment: "{{ clouds[cloud].env | default({}) }}"
+  ignore_errors: true
+
+# Phase 1 – destroy cluster infra
+- name: Terraform destroy {{ cloud }} cluster infra
+  tags: [cluster_destroy]
+  ansible.builtin.command:
+    cmd: terraform destroy -auto-approve
+    chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
+  environment: "{{ clouds[cloud].env | default({}) }}"
+  ignore_errors: true

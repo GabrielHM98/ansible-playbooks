@@ -1,19 +1,19 @@
 - name: Terraform init {{ cloud }} cluster 
-  tags: [cluster]
+  tags: [cluster_init]
   ansible.builtin.command:
     cmd: terraform init -upgrade
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
 - name: Terraform apply {{ cloud }} cluster
-  tags: [cluster]
+  tags: [cluster_init]
   ansible.builtin.command:
     cmd: terraform apply -auto-approve
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
   environment: "{{ clouds[cloud].env | default({}) }}"
 
 - name: Read Terraform outputs from {{ cloud }} cluster
-  tags: [cluster]
+  tags: [cluster_init]
   ansible.builtin.command:
     cmd: terraform output -json
     chdir: "{{ repos.workdir }}/cloud-engineering/{{ clouds[cloud].cluster_tf_subdir }}"
@@ -21,6 +21,6 @@
   environment: "{{ clouds[cloud].env | default({}) }}"
 
 - name: Extract cluster_name
-  tags: [cluster]
+  tags: [cluster_init]
   ansible.builtin.set_fact:
     cluster_name: "{{ (tf_cluster_outputs.stdout | from_json).cluster_name.value }}"
