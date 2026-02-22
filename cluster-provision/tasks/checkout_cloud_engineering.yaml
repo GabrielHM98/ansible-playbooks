@@ -7,5 +7,5 @@
   git:
     repo: "{{ cloud_engineering_repo }}"
     dest: "{{ workdir }}/cloud-engineering"
-    version: main
+    version: master
     force: yes

@@ -1,0 +1,15 @@
+- name: Destroy platform infra + cluster
+  hosts: localhost
+  gather_facts: no
+
+  vars_files:
+    - ./vars/cloud-providers.yaml
+
+  vars:
+    target_cloud: "{{ cloud | default('eks') }}"
+
+  tasks:
+    - include_tasks: tasks/validate.yaml
+    - include_tasks: tasks/checkout_cloud_engineering.yaml
+    - include_tasks: tasks/infra_destroy.yaml
+    - include_tasks: tasks/terraform_destroy.yaml

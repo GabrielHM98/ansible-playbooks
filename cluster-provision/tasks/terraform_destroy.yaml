@@ -1,5 +1,11 @@
-- name: Terraform destroy (cluster)
-  command: terraform destroy -auto-approve
-  args:
-    chdir: "{{ cluster_tf }}"
-  environment: "{{ cloud_env }}"
+- name: Destroy platform infra (Helm uninstall)
+  vars:
+    components:
+      - { name: observability, release: observability }
+      - { name: ingresscontroller,       release: ingress-nginx }
+      - { name: argocd-bootstrap,        release: argocd }
+
+- name: Helm uninstall platform components
+  command: helm uninstall {{ item.release }}
+  loop: "{{ components }}"
+  failed_when: false

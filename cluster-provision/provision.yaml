@@ -1,16 +1,25 @@
-- name: Provision cluster + platform infra (GitOps bootstrap)
+- name: Provision cluster + platform infra
   hosts: localhost
   gather_facts: no
 
   vars_files:
-    - vars/clouds-providers.yaml
+    - vars/clouds.yml
 
   vars:
     target_cloud: "{{ cloud | default('eks') }}"
 
   tasks:
     - include_tasks: tasks/validate.yaml
+      tags: [always]
+
     - include_tasks: tasks/checkout_cloud_engineering.yaml
+      tags: [always]
+
     - include_tasks: tasks/terraform_init.yaml
+      tags: [cluster]
+
     - include_tasks: tasks/terraform_apply.yaml
+      tags: [cluster]
+
     - include_tasks: tasks/infra_provision.yaml
+      tags: [infra]

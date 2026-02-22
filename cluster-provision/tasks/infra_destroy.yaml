@@ -1,15 +1,11 @@
-- name: Destroy platform infra (Helm uninstall)
-  vars:
-    components:
-      - { name: observability, release: observability }
-      - { name: ingresscontrollers,       release: ingress-platform }
-      - { name: argocd,        release: argocd }
+# tasks/infra_provision.yaml
 
-  loop: "{{ components }}"
-  loop_control:
-    loop_var: comp
-
-  block:
-    - name: Helm uninstall {{ comp.name }}
-      command: helm uninstall {{ comp.release }}
-      failed_when: false
+- name: Helm upgrade/install platform components (infra-gitops)
+  command: >
+    helm uninstall {{ item.release }}
+    {{ infra_gitops_dir }}/{{ item.name }}
+  loop:
+    - { name: argocd-bootstrap,        release: argocd }
+    - { name: ingresscontroller,       release: ingress-nginx }
+    - { name: observability, release: observability }
+  environment: "{{ cloud_env }}"
