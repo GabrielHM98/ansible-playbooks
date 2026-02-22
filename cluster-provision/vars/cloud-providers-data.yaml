@@ -1,7 +1,7 @@
 repos:
   cloud_engineering_repo: "https://github.com/GabrielHM98/cloud-engineering.git"
   workdir: "/tmp/platform-workdir"
-  infra_gitops_subdir: "/infra-gitops"
+  infra_gitops_subdir: "infra-gitops"
 
 clouds:
   eks:
